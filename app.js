@@ -1,4 +1,4 @@
-const state = { menu: null, cart: new Map() };
+const state = { menu: null, cart: new Map(), customItems: new Map() };
 const $ = (id) => document.getElementById(id);
 const fmt = (n) => `IDR ${Math.round(n).toLocaleString('en-US')}`;
 const esc = (s = '') => String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -19,7 +19,7 @@ async function loadMenu() {
 function allItems() {
   return state.menu.sections.flatMap(section => section.items.map(item => ({ ...item, section })));
 }
-function findItem(id) { return allItems().find(item => item.id === id); }
+function findItem(id) { return allItems().find(item => item.id === id) || state.customItems.get(id); }
 
 function renderAll() {
   const m = state.menu;
@@ -66,6 +66,41 @@ function addItem(id) { state.cart.set(id, (state.cart.get(id) || 0) + 1); render
 function changeQty(id, delta) {
   const next = (state.cart.get(id) || 0) + delta;
   if (next <= 0) state.cart.delete(id); else state.cart.set(id, next);
+  renderCart();
+}
+function parseIdrAmount(raw) {
+  const digits = String(raw || '').replace(/[^0-9]/g, '');
+  return digits ? Number(digits) : 0;
+}
+function addCustomAddon(nameInputId, amountInputId) {
+  const nameEl = $(nameInputId);
+  const amountEl = $(amountInputId);
+  const amount = parseIdrAmount(amountEl.value);
+  const name = (nameEl.value || '').trim() || '自定義 Add-on';
+  if (!amount || amount < 1) {
+    amountEl.focus();
+    amountEl.setAttribute('aria-invalid', 'true');
+    return;
+  }
+  amountEl.removeAttribute('aria-invalid');
+  const preTax = amount / 1.21;
+  const id = `custom-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  state.customItems.set(id, {
+    id,
+    name: { zh_hant: name, en: 'Custom add-on' },
+    description: { zh_hant: '自定義金額（已含 21% 稅及服務費）', en: 'Custom amount, inclusive of 21% service charge and government tax' },
+    dietary_tags: [],
+    price: {
+      amount,
+      display: fmt(amount),
+      pre_service_tax_estimate: preTax,
+      included_service_tax_estimate: amount - preTax
+    },
+    custom: true
+  });
+  state.cart.set(id, 1);
+  nameEl.value = '';
+  amountEl.value = '';
   renderCart();
 }
 function cartRowHtml(item, qty) {
@@ -130,5 +165,13 @@ document.addEventListener('click', (ev) => {
 document.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') closeCartDrawer(); });
 $('bottomCartBar').addEventListener('click', openCartDrawer);
 $('reloadBtn').addEventListener('click', loadMenu);
-$('clearCartBtn').addEventListener('click', () => { state.cart.clear(); renderCart(); });
+$('customAddonForm').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  addCustomAddon('customAddonName', 'customAddonAmount');
+});
+$('drawerCustomAddonForm').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  addCustomAddon('drawerCustomAddonName', 'drawerCustomAddonAmount');
+});
+$('clearCartBtn').addEventListener('click', () => { state.cart.clear(); state.customItems.clear(); renderCart(); });
 loadMenu();

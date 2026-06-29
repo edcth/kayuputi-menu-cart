@@ -46,6 +46,15 @@
             <p id="cartMeta">0 items</p>
           </div>
         </div>
+        <form id="customAddonForm" class="custom-addon">
+          <label>自定義 Add-on 名稱
+            <input id="customAddonName" placeholder="例如：Wine pairing / Service add-on" />
+          </label>
+          <label>金額（IDR，已含 21% 稅服）
+            <input id="customAddonAmount" inputmode="numeric" placeholder="例如：150000" />
+          </label>
+          <button type="submit" class="add custom-add-btn">加入自定義金額</button>
+        </form>
         <div id="cartItems" class="cart-items empty">未加入任何項目</div>
         <div class="totals">
           <div><span>小計 / Subtotal</span><strong id="subtotal">IDR 0</strong></div>
@@ -73,6 +82,15 @@
         </div>
         <button class="drawer-close" type="button" data-close-cart>關閉</button>
       </div>
+      <form id="drawerCustomAddonForm" class="custom-addon drawer-addon">
+        <label>自定義 Add-on 名稱
+          <input id="drawerCustomAddonName" placeholder="例如：Wine pairing / Service add-on" />
+        </label>
+        <label>金額（IDR，已含 21% 稅服）
+          <input id="drawerCustomAddonAmount" inputmode="numeric" placeholder="例如：150000" />
+        </label>
+        <button type="submit" class="add custom-add-btn">加入自定義金額</button>
+      </form>
       <div id="drawerCartItems" class="cart-items empty">未加入任何項目</div>
       <div class="totals drawer-totals">
         <div><span>小計 / Subtotal</span><strong id="drawerSubtotal">IDR 0</strong></div>

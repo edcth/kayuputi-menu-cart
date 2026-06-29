@@ -128,3 +128,28 @@ h2 { margin: 0 0 14px; font-size: 16px; letter-spacing: .09em; text-transform: u
   .bottom-cart-bar strong { text-align: right; }
   .drawer-panel { width: 100vw; max-height: 82vh; border-radius: 26px 26px 0 0; }
 }
+.custom-addon {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 4px;
+  padding: 14px;
+  border: 1px dashed rgba(126,146,120,.55);
+  border-radius: 18px;
+  background: rgba(240,245,238,.62);
+  font: 12px ui-sans-serif, system-ui, sans-serif;
+  color: var(--muted);
+}
+.custom-addon label { display: grid; gap: 6px; }
+.custom-addon input {
+  width: 100%;
+  min-width: 0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.custom-addon input[aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(159,58,56,.12);
+}
+.custom-add-btn { width: 100%; justify-content: center; }
+.drawer-addon { margin-top: 16px; }
